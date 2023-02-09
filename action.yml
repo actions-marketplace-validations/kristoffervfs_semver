@@ -1,5 +1,5 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'semver'
+description: 'Auto generate realeses based on committags'
 inputs:
   who-to-greet:  # id of input
     description: 'Who to greet'
