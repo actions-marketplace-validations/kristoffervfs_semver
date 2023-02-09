@@ -1,4 +1,4 @@
-name: 'automatic-semver-release'
+name: 'automatic-semantic-versioned-release'
 description: 'Auto generate realeses based on committags'
 inputs:
   who-to-greet:  # id of input
