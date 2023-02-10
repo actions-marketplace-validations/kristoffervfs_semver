@@ -23,20 +23,16 @@ const scope = {
 };
 
 // program
-try {
-  let newRelease = await createNewRelease();
 
-  if(!newRelease){
-    console.log('No need for new release');
-    core.setOutput('new-release-created', false);
-  }
+let newRelease = await createNewRelease();
 
-  core.setOutput('new-release-created', true);
-  core.setOutput('new-version', newRelease);
-
-} catch(error){
-  core.setFailed(error.message);
+if(!newRelease){
+  console.log('No need for new release');
+  core.setOutput('new-release-created', false);
 }
+
+core.setOutput('new-release-created', true);
+core.setOutput('new-version', newRelease);
 
 
 async function createNewRelease(commits, currentVersion){
