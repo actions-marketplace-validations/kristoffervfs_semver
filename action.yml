@@ -9,7 +9,7 @@ outputs:
   new-release-created: # id of output
     description: 'Bool if new release was created or not'
   new-version:
-    descripton: 'String with new semantic version'
+    description: 'String with new semantic version'
 runs:
   using: 'node16'
   main: 'index.js'
