@@ -1,13 +1,15 @@
 name: 'automatic-semantic-versioned-release-test'
 description: 'Auto generate realeses based on committags'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  repo-token:  # id of input
+    description: 'Github repository token'
     required: true
-    default: 'World'
+    default: ''
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  new-release-created: # id of output
+    description: 'Bool if new release was created or not'
+  new-version:
+    descripton: 'String with new semantic version'
 runs:
   using: 'node16'
   main: 'index.js'
