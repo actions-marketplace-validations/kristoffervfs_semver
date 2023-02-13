@@ -84,24 +84,15 @@ async function getLatestRelease(){
   if(!latestReleaseRef || !latestRelease.data ||!latestReleaseRef.data.object.type == 'commit')
     throw new Error('Latest relase is not referencing a commit');
 
-  
-
-  let response = {
+  return {
     version: latestRelease.data.name,
     commitSha: latestReleaseRef.data.object.sha
   };
-
-  console.log('Latest release:');
-  console.log(response);
-
-  return response;
 
 }
 
 async function getNewCommits(limitorSha){      
    
-  console.log('Limitor sha: ' + limitorSha);
-
   // gets all commits
   let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
     owner: scope.repo.owner,
@@ -109,23 +100,21 @@ async function getNewCommits(limitorSha){
   });
 
   let commits = request.data;
-
-  console.log(commits);  
   
   // loops throug array of commmit starting from newest
   var newCommits = [];
   for(let i = commits.length - 1; i >= 0; i--){
     
-    let commit = commits[i].commit;
+    let commit = commits[i];
 
     // breaks when we reach same commit as limitor
-    if(commit.sh == limitorSha)
+    if(commit.sha == limitorSha)
       break;
 
     // adds commit sha and message to array of new commits
     newCommits[newCommits.length] = {
       sha: commit.sha,
-      message: commit.message
+      message: commit.commit.message
     };
   }
 
