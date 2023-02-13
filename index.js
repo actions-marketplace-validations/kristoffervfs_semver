@@ -71,6 +71,8 @@ async function getLatestRelease(){
     repo: scope.repo.name
   });
 
+  console.log(latestRelease.data.tag_name);
+
   if(!latestRelease)
     throw new Error('Could not find any releases');
 
@@ -78,16 +80,16 @@ async function getLatestRelease(){
   let latestReleaseRef = await octokit.request('GET /repos/{owner}/{repo}/git/ref/{ref}', {
     owner: 'OWNER',
     repo: 'REPO',
-    ref: latestRelease.tag_name
+    ref: latestRelease.data.tag_name
   });  
 
   // throw exception if last commit didn't reference a commit
-  if(!latestReleaseRef || !latestReleaseRef.object.type == 'commit')
+  if(!latestReleaseRef || !latestRelease.data ||!latestReleaseRef.data.object.type == 'commit')
     throw new Error('Latest relase is not referencing a commit');
 
   return {
-    version: latestRelease.name,
-    commitSha: latestReleaseRef.object.sha
+    version: latestRelease.data.name,
+    commitSha: latestReleaseRef.data.object.sha
   };
 
 }
