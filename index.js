@@ -3,9 +3,16 @@ const github = require('@actions/github');
 const { Octokit } = require("@octokit/action");
 
 // regexes determining level of version change
-const majorRegex = new RegExp("^(major|breaking|BREAKING)(\(.+\)):.*");
-const minorRegex = new RegExp("^(feat|minor)(\(.+\)):.*");
+const majorRegex = new RegExp("^(breaking|BREAKING)(\(.+\)):.*");
+const minorRegex = new RegExp("^(feat)(\(.+\)):.*");
 const patchRegex = new RegExp("^(fix|perf|refactor)(\(.+\)):.*");
+const breakingRegex = new RegExp("^(breaking|BREAKING)(\(.+\)):.*");
+const featureRegex = new RegExp("^(feat)(\(.+\)):.*");
+const fixRegex = new RegExp("^(fix)(\(.+\)):.*");
+const perfRegex = new RegExp("^(perf)(\(.+\)):.*");
+const refactorRegex = new RegExp("^(refactor)(\(.+\)):.*");
+const contentRegex = new RegExp('^(feat)\(.+\)(:)(.*)');
+
 
 // github client
 const octokit = new Octokit({
@@ -63,7 +70,7 @@ async function createNewRelease(commits, currentVersion){
     tag_name: newVersion,
     target_commitish: scope.comitish,
     name: newVersion,
-    body: 'Description of the release',
+    body: generateReleaseNotes(commits),
     draft: false,
     prerelease: false,
     generate_release_notes: true
@@ -147,7 +154,7 @@ function calculateNewVersion(commits, verString){
   for(let i = 0; i < commits.length; i++){
 
     let commit = commits[i];
-    console.log(commit.message + ', ' + commit.sha.slice(0,5));
+    console.log(commit.message + ', ' + commit.sha.slice(0,7));
 
     if(commit.message.match(majorRegex))
       major = true;
@@ -185,5 +192,84 @@ function splitVerison(verStr){
     minor: Number(arr[1]),
     patch: Number(arr[2])
   };
+
+}
+
+function generateReleaseNotes(commits){
+
+  let breakingChanges = [];
+  let features = [];
+  let fixes = [];
+  let performance = [];
+  let refactor = [];
+
+  for(let i = 0; i < commits.length; i++){
+
+    let commitMessage = commits[i].message;
+
+    if(commitMessage.match(breakingRegex)){
+
+      breakingChanges.push(getCommitMessage(commitMessage))
+
+    } else if(commitMessage.match(featureRegex)){
+      
+      features.push(getCommitMessage(commitMessage));
+
+    } else if(commitMessage.match(fixRegex)){
+
+      fixes.push(getCommitMessage(commitMessage));
+      
+    } else if(commitMessage.match(perfRegex)){
+
+      performance.push(getCommitMessage(commitMessage));
+      
+    } else if(commitMessage.match(refactorRegex)){
+
+      refactor.push(getCommitMessage(commitMessage));
+      
+    }
+    
+  }
+
+  let releaseNotes = '';
+
+  if(breakingChanges){
+    releaseNotes += '\n' 
+      + '###### BREAKING: '
+      + breakingChanges.map(i => '*' + i + '\n');
+  }  
+
+  if(breakingChanges){
+    releaseNotes += '\n' 
+      + '###### BREAKING: '
+      + breakingChanges.map(i => '*' + i + '\n');
+  }
+
+  if(fixes){
+    releaseNotes += '\n' 
+      + '###### Bug Fixes: '
+      + fixes.map(i => '*' + i + '\n');
+  }
+
+  if(performance){
+    releaseNotes += '\n' 
+      + '###### Perfomance improvements: '
+      + performance.map(i => '*' + i + '\n');
+  }
+
+  if(refactor){
+    releaseNotes += '\n' 
+      + '###### Refactoring: '
+      + refactor.map(i => '*' + i + '\n');
+  }
+
+  return releaseNotes;
+  
+}
+
+function getCommitMessage(str){
+
+  let arr = str.match(contentRegex);
+  return '**' + arr[2].replace(/\(|\)/g,'') + '**, ' + arr[4].replace(/^ /g, '');
 
 }
