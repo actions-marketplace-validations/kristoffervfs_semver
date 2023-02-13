@@ -78,8 +78,8 @@ async function getLatestRelease(){
 
   // gets reference of last release
   let latestReleaseRef = await octokit.request('GET /repos/{owner}/{repo}/git/ref/tags/{ref}', {
-    owner: 'OWNER',
-    repo: 'REPO',
+    owner: scope.repo.owner,
+    repo: scope.repo.name,
     ref: latestRelease.data.tag_name
   });  
 
