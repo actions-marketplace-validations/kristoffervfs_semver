@@ -84,15 +84,21 @@ async function getLatestRelease(){
   if(!latestReleaseRef || !latestRelease.data ||!latestReleaseRef.data.object.type == 'commit')
     throw new Error('Latest relase is not referencing a commit');
 
-  return {
+  let response = {
     version: latestRelease.data.name,
     commitSha: latestReleaseRef.data.object.sha
   };
+
+  console.log(response);
+
+  return response;
 
 }
 
 async function getNewCommits(limitorSha){      
    
+  console.log('limitor: ' + limitorSha);
+
   // gets all commits
   let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
     owner: scope.repo.owner,
