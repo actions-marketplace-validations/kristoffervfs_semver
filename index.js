@@ -70,7 +70,7 @@ async function createNewRelease(commits, currentVersion){
     tag_name: newVersion,
     target_commitish: scope.comitish,
     name: newVersion,
-    body: generateReleaseNotes(commits),
+    body: generateReleaseNotes(newCommits),
     draft: false,
     prerelease: false,
     generate_release_notes: true
