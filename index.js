@@ -9,7 +9,7 @@ const patchRegex = new RegExp("^(fix|perf|refactor)(\(.+\)):.*");
 
 // github client
 const octokit = new Octokit({
-  auth: core.getInput('repo-token')
+  auth: core.getInput('GITHUB_TOKEN')
 });
 
 // scope

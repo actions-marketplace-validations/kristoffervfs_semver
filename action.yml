@@ -1,7 +1,7 @@
 name: 'automatic-semantic-versioned-release-test'
 description: 'Auto generate realeses based on committags'
 inputs:
-  repo-token:  # id of input
+  GITHUB_TOKEN: # id of input
     description: 'Github repository token'
     required: true
     default: ''
