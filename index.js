@@ -11,7 +11,6 @@ const featureRegex = new RegExp("^(feat)(\(.+\)):.*");
 const fixRegex = new RegExp("^(fix)(\(.+\)):.*");
 const perfRegex = new RegExp("^(perf)(\(.+\)):.*");
 const refactorRegex = new RegExp("^(refactor)(\(.+\)):.*");
-const contentRegex = new RegExp('^(.+)\(.+\)(:)(.*)');
 
 
 // github client
@@ -235,32 +234,27 @@ function generateReleaseNotes(commits){
   let releaseNotes = '';
 
   if(breakingChanges){
-    releaseNotes += '\n' 
-      + '###### BREAKING: '
+    releaseNotes += '###### BREAKING: \n'
       + breakingChanges.map(i => '*' + i + '\n');
   }  
 
   if(features){
-    releaseNotes += '\n' 
-      + '###### Features: '
+    releaseNotes += '###### Features: \n'
       + features.map(i => '*' + i + '\n');
   }
 
   if(fixes){
-    releaseNotes += '\n' 
-      + '###### Bug Fixes: '
+    releaseNotes += '###### Bug Fixes: \n'
       + fixes.map(i => '*' + i + '\n');
   }
 
   if(performance){
-    releaseNotes += '\n' 
-      + '###### Perfomance improvements: '
+    releaseNotes += '###### Perfomance improvements: \n'
       + performance.map(i => '*' + i + '\n');
   }
 
   if(refactor){
-    releaseNotes += '\n' 
-      + '###### Refactoring: '
+    releaseNotes += '###### Refactoring: \n'
       + refactor.map(i => '*' + i + '\n');
   }
 
@@ -268,9 +262,10 @@ function generateReleaseNotes(commits){
   
 }
 
+
 function getCommitMessage(str){
 
-  let arr = str.match(contentRegex);
-  return '**' + arr[2].replace(/\(|\)/g,'') + '**, ' + arr[4].replace(/^ /g, '');
+  let arr = /\(([^)]+)\):(.+)/.exec(str);
+  return '**' + arr[1].replace(/\(|\)/g,'') + '**, ' + arr[2].replace(/^ /g, '');
 
 }
