@@ -44,7 +44,7 @@ createNewRelease().then((result) => {
 }).catch((error) => {
 
   core.setOutput('new-release-created', true);
-  core.setOutput('new-version', result);
+  core.setOutput('new-version', null);
   core.setFailed(error.message);
 
 });
