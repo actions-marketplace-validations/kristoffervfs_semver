@@ -38,7 +38,7 @@ async function createNewRelease(commits, currentVersion){
   // get latest release
   let latestRelease = await getLatestRelease();
   // get commtis after last release
-  let newCommits = getNewCommits(latestRelease.commitSha);
+  let newCommits = await getNewCommits(latestRelease.commitSha);
   // calculate new version based on last release and new commits
   let newVersion = calculateNewVersion(newCommits, latestRelease.version);
 
