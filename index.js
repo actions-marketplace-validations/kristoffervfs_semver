@@ -43,7 +43,7 @@ async function createNewRelease(commits, currentVersion){
   let newVersion = calculateNewVersion(newCommits, latestRelease.version);
 
   if(!newVersion)
-    return undefined;
+    return null;
 
   // creates new release  
   await octokit.request('POST /repos/{owner}/{repo}/releases', {
@@ -84,15 +84,23 @@ async function getLatestRelease(){
   if(!latestReleaseRef || !latestRelease.data ||!latestReleaseRef.data.object.type == 'commit')
     throw new Error('Latest relase is not referencing a commit');
 
-  return {
+  
+
+  let response = {
     version: latestRelease.data.name,
     commitSha: latestReleaseRef.data.object.sha
   };
+
+  console.log('Latest release:');
+  console.log(response);
+
+  return response;
 
 }
 
 async function getNewCommits(limitorSha){      
    
+  console.log('Limitor sha: ' + limitorSha);
 
   // gets all commits
   let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
@@ -101,7 +109,8 @@ async function getNewCommits(limitorSha){
   });
 
   let commits = request.data;
-  
+
+  console.log(commits);  
   
   // loops throug array of commmit starting from newest
   var newCommits = [];
@@ -119,6 +128,8 @@ async function getNewCommits(limitorSha){
       message: commit.message
     };
   }
+
+  console.log(newCommits);
 
   // returns new commits since sha 
   return newCommits.reverse();
@@ -146,6 +157,10 @@ function calculateNewVersion(commits, verString){
     if(commit.message.match(patchRegex))
       patch = true;
   }
+
+  console.log('major:' + major);
+  console.log('minor:' + minor);
+  console.log('patch:' + patch);
 
   if(major)
     return formatVersion(currentVersion.major + 1, 0, 0);
