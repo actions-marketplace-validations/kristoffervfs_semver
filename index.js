@@ -162,10 +162,11 @@ function formatVersion(major, minor, patch){
   return 'v' + major + '.' + minor + '.' + patch; 
 }
 
+
 function splitVerison(verStr){
 
-  vetStr.replace('v', '');
-  let arr = vetStr.splice('.');
+  verStr = verStr.replace('v', '');
+  let arr = verStr.split('.');
 
   return {
     major: arr[0],
@@ -174,3 +175,5 @@ function splitVerison(verStr){
   };
 
 }
+
+
