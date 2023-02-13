@@ -77,7 +77,7 @@ async function getLatestRelease(){
     throw new Error('Could not find any releases');
 
   // gets reference of last release
-  let latestReleaseRef = await octokit.request('GET /repos/{owner}/{repo}/git/ref/{ref}', {
+  let latestReleaseRef = await octokit.request('GET /repos/{owner}/{repo}/git/ref/tags/{ref}', {
     owner: 'OWNER',
     repo: 'REPO',
     ref: latestRelease.data.tag_name
