@@ -11,7 +11,7 @@ const featureRegex = new RegExp("^(feat)(\(.+\)):.*");
 const fixRegex = new RegExp("^(fix)(\(.+\)):.*");
 const perfRegex = new RegExp("^(perf)(\(.+\)):.*");
 const refactorRegex = new RegExp("^(refactor)(\(.+\)):.*");
-const contentRegex = new RegExp('^(feat)\(.+\)(:)(.*)');
+const contentRegex = new RegExp('^(.+)\(.+\)(:)(.*)');
 
 
 // github client
@@ -197,8 +197,6 @@ function splitVerison(verStr){
 
 function generateReleaseNotes(commits){
 
-  console.log(commits);
-  console.log(commits.length);
 
   let breakingChanges = [];
   let features = [];
