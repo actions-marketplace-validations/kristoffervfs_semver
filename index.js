@@ -22,15 +22,26 @@ const scope = {
 };
 
 // program
-let newRelease = createNewRelease();
+createNewRelease().then((result) => {
 
-if(!newRelease){
-  console.log('No need for new release');
-  core.setOutput('new-release-created', false);
-}
+  if(!result){
+    console.log('No need for new release');
+    core.setOutput('new-release-created', false);
+  }
+  
+  console.log('Release ' + result + ' created');
+  core.setOutput('new-release-created', true);
+  core.setOutput('new-version', result);
+  
 
-core.setOutput('new-release-created', true);
-core.setOutput('new-version', newRelease);
+}).catch((error) => {
+
+  core.setOutput('new-release-created', true);
+  core.setOutput('new-version', result);
+  core.setFailed(error.message);
+
+});
+
 
 
 async function createNewRelease(commits, currentVersion){
@@ -84,20 +95,14 @@ async function getLatestRelease(){
   if(!latestReleaseRef || !latestRelease.data ||!latestReleaseRef.data.object.type == 'commit')
     throw new Error('Latest relase is not referencing a commit');
 
-  let response = {
+  return {
     version: latestRelease.data.name,
     commitSha: latestReleaseRef.data.object.sha
   };
 
-  console.log(response);
-
-  return response;
-
 }
 
 async function getNewCommits(limitorSha){      
-   
-  console.log('limitor: ' + limitorSha);
 
   // gets all commits
   let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
@@ -124,8 +129,6 @@ async function getNewCommits(limitorSha){
     };
   }
 
-  console.log(newCommits);
-
   // returns new commits since sha 
   return newCommits.reverse();
 
@@ -139,9 +142,12 @@ function calculateNewVersion(commits, verString){
   let minor = false;
   let patch = false;
 
+  console.log('New commits:');
+
   for(let i = 0; i < commits.length; i++){
 
     let commit = commits[i];
+    console.log(commit.sha + ', ' + commit.message);
 
     if(commit.message.match(majorRegex))
       major = true;
