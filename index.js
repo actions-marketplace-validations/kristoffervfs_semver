@@ -147,7 +147,7 @@ function calculateNewVersion(commits, verString){
   for(let i = 0; i < commits.length; i++){
 
     let commit = commits[i];
-    console.log(commit.sha + ', ' + commit.message);
+    console.log(commit.message + ', ' + commit.sha.slice(0,5));
 
     if(commit.message.match(majorRegex))
       major = true;
@@ -158,10 +158,6 @@ function calculateNewVersion(commits, verString){
     if(commit.message.match(patchRegex))
       patch = true;
   }
-
-  console.log('major:' + major);
-  console.log('minor:' + minor);
-  console.log('patch:' + patch);
 
   if(major)
     return formatVersion(currentVersion.major + 1, 0, 0);
