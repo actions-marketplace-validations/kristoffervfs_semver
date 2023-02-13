@@ -13,14 +13,12 @@ const octokit = new Octokit({
 });
 
 // scope
-let githubContext = JSON.stringify(github.context.payload);
-console.log(githubContext);
 const scope = {
   repo: {
-    owner: githubContext.repository.owner.name,
-    name: githubContext.repository.name
+    owner: github.context.payload.repository.owner.name,
+    name: github.context.payload.repository.name
   },
-  commitish: githubContext.commits[githubContext.comitish.length - 1].id
+  commitish: github.context.payload.commits[githubContext.comitish.length - 1].id
 };
 
 // program
