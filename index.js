@@ -130,10 +130,10 @@ async function getNewCommits(limitorSha){
       break;
 
     // adds commit sha and message to array of new commits
-    newCommits[newCommits.length] = {
+    newCommits.push({
       sha: commit.sha,
       message: commit.commit.message
-    };
+    });
   }
 
   // returns new commits since sha 
@@ -197,6 +197,9 @@ function splitVerison(verStr){
 
 function generateReleaseNotes(commits){
 
+  console.log(commits);
+  console.log(commits.length);
+
   let breakingChanges = [];
   let features = [];
   let fixes = [];
@@ -239,10 +242,10 @@ function generateReleaseNotes(commits){
       + breakingChanges.map(i => '*' + i + '\n');
   }  
 
-  if(breakingChanges){
+  if(features){
     releaseNotes += '\n' 
-      + '###### BREAKING: '
-      + breakingChanges.map(i => '*' + i + '\n');
+      + '###### Features: '
+      + features.map(i => '*' + i + '\n');
   }
 
   if(fixes){
