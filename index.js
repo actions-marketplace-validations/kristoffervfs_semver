@@ -13,7 +13,8 @@ const octokit = new Octokit({
 });
 
 // scope
-let githubContext = JSON.stringify(github.context.payload, undefined, 2);
+let githubContext = JSON.stringify(github.context.payload);
+console.log(githubContext);
 const scope = {
   repo: {
     owner: githubContext.repository.owner.name,
