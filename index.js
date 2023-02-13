@@ -24,7 +24,7 @@ const scope = {
 
 // program
 
-let newRelease = await createNewRelease();
+let newRelease = createNewRelease();
 
 if(!newRelease){
   console.log('No need for new release');
