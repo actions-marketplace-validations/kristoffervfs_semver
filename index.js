@@ -22,7 +22,6 @@ const scope = {
 };
 
 // program
-
 let newRelease = createNewRelease();
 
 if(!newRelease){
@@ -71,8 +70,6 @@ async function getLatestRelease(){
     repo: scope.repo.name
   });
 
-  console.log(latestRelease.data.tag_name);
-
   if(!latestRelease)
     throw new Error('Could not find any releases');
 
@@ -98,19 +95,22 @@ async function getNewCommits(limitorSha){
    
 
   // gets all commits
-  let commits = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+  let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
     owner: scope.repo.owner,
     repo: scope.repo.name
   });
+
+  let commits = request.data;
+  
   
   // loops throug array of commmit starting from newest
   var newCommits = [];
   for(let i = commits.length - 1; i >= 0; i--){
     
-    let commit = commits[i].commit;;
+    let commit = commits[i].commit;
 
     // breaks when we reach same commit as limitor
-    if(commit.sha == limitorSha)
+    if(commit.sh == limitorSha)
       break;
 
     // adds commit sha and message to array of new commits
@@ -127,7 +127,7 @@ async function getNewCommits(limitorSha){
 
 function calculateNewVersion(commits, verString){
 
-  letCurrentVersion = splitVerison(verString);
+  let currentVersion = splitVerison(verString);
 
   let major = false;
   let minor = false;
@@ -169,11 +169,9 @@ function splitVerison(verStr){
   let arr = verStr.split('.');
 
   return {
-    major: arr[0],
-    minor: arr[1],
-    patch: arr[2]
+    major: Number(arr[0]),
+    minor: Number(arr[1]),
+    patch: Number(arr[2])
   };
 
 }
-
-
