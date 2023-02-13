@@ -18,7 +18,7 @@ const scope = {
     owner: github.context.payload.repository.owner.name,
     name: github.context.payload.repository.name
   },
-  commitish: github.context.payload.commits[githubContext.comitish.length - 1].id
+  commitish: github.context.payload.commits[github.context.payload.commits.length - 1].id
 };
 
 // program
