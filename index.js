@@ -146,7 +146,8 @@ async function getNewCommits(limitorSha){
     // adds commit sha and message to array of new commits
     newCommits.push({
       sha: commit.sha,
-      message: commit.commit.message
+      message: commit.commit.message,
+      author: commit.commit.author.name
     });
   }
 
@@ -213,12 +214,12 @@ function splitVerison(verStr){
 
 function generateReleaseNotes(commits){
 
-
+  let contributors = new Set();
   let breakingChanges = [];
   let features = [];
   let fixes = [];
   let performance = [];
-  let refactor = [];
+  let refactor = [];  
 
   for(let i = 0; i < commits.length; i++){
 
@@ -227,28 +228,34 @@ function generateReleaseNotes(commits){
     if(commitMessage.match(breakingRegex)){
 
       breakingChanges.push(getCommitMessage(commitMessage))
+      contributors.add(commits[i].author);
 
     } else if(commitMessage.match(featureRegex)){
       
       features.push(getCommitMessage(commitMessage));
+      contributors.add(commits[i].author);
 
     } else if(commitMessage.match(fixRegex)){
 
       fixes.push(getCommitMessage(commitMessage));
+      contributors.add(commits[i].author);
       
     } else if(commitMessage.match(perfRegex)){
 
       performance.push(getCommitMessage(commitMessage));
+      contributors.add(commits[i].author);
       
     } else if(commitMessage.match(refactorRegex)){
 
       refactor.push(getCommitMessage(commitMessage));
+      contributors.add(commits[i].author);
       
     }
     
   }
 
-  let releaseNotes = '';
+  let now = new Date();
+  let releaseNotes = now.toString('dd-MM-yyyy hh:mm');
 
   if(breakingChanges.length > 0){
     releaseNotes += '#### BREAKING: \n'
@@ -273,7 +280,11 @@ function generateReleaseNotes(commits){
   if(refactor.length > 0){
     releaseNotes += '#### REFACTORING: \n'
       + refactor.map(i => '* ' + i).join('\n');
-  }
+  }  
+
+  releaseNotes += '\n\n';
+  releaseNotes += '#### CONTRIBUTORS: \n';
+  releaseNotes += contributors.map(c => '*' + c).join('\n');
 
   return releaseNotes;
   
