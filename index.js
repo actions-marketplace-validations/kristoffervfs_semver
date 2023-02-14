@@ -284,7 +284,9 @@ function generateReleaseNotes(commits){
 
   releaseNotes += '\n\n';
   releaseNotes += '#### CONTRIBUTORS: \n';
-  releaseNotes += contributors.map(c => '*' + c).join('\n');
+  contributors.forEach(c => {
+    releaseNotes += '*' + c + '\n'
+  });
 
   return releaseNotes;
   
