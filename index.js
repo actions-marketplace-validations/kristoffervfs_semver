@@ -286,7 +286,7 @@ function generateReleaseNotes(commits){
 }
 
 
-function getCommitMessage(commmit){
+function getCommitMessage(commit){
 
   let arr = /\(([^)]+)\):(.+)/.exec(commmit.message);
 
