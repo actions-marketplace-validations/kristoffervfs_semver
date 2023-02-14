@@ -18,6 +18,8 @@ const octokit = new Octokit({
   auth: core.getInput('GITHUB_TOKEN')
 });
 
+console.log(github.context);
+
 if(!github.context.payload.repository 
   || !github.context.payload.repository.name
   || !github.context.payload.repository.owner
