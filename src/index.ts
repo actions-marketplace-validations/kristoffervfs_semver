@@ -1,6 +1,8 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const { Octokit } = require("@octokit/action");
+import core from '@actions/core';
+import github from '@actions/github';
+import { Octokit } from "@octokit/action";
+import { ICommit } from './interfaces/ICommit';
+import { IScope } from './interfaces/IScope';
 
 // regexes determining level of version change
 const majorRegex = new RegExp("^(breaking|BREAKING)(\(.+\)):.*");
@@ -18,8 +20,15 @@ const octokit = new Octokit({
   auth: core.getInput('GITHUB_TOKEN')
 });
 
+if(!github.context.payload.repository 
+  || !github.context.payload.repository.name
+  || !github.context.payload.repository.owner
+  || !github.context.payload.repository.owner.name
+  || !github.context.payload.commits)
+  throw new Error('Github payload does not include repository information');
+
 // scope
-const scope = {
+const scope : IScope = {
   repo: {
     owner: github.context.payload.repository.owner.name,
     name: github.context.payload.repository.name
@@ -28,29 +37,33 @@ const scope = {
 };
 
 // program
-createNewRelease().then((result) => {
+async function run() : Promise<void>{
+  try {    
 
-  if(!result){
-    console.log('No need for new release');
-    core.setOutput('new-release-created', false);
+    let result = await createNewRelease();
+
+    if(!result){
+      console.log('No need for new release');
+      core.setOutput('new-release-created', false);
+    }
+    
+    console.log('Release ' + result + ' created');
+    core.setOutput('new-release-created', true);
+    core.setOutput('new-version', result);
+
+  } catch (error : any){
+
+    core.setOutput('new-release-created', true);
+    core.setOutput('new-version', null);
+    core.setFailed(error.message);
+
   }
-  
-  console.log('Release ' + result + ' created');
-  core.setOutput('new-release-created', true);
-  core.setOutput('new-version', result);
-  
+}
 
-}).catch((error) => {
-
-  core.setOutput('new-release-created', true);
-  core.setOutput('new-version', null);
-  core.setFailed(error.message);
-
-});
+run();
 
 
-
-async function createNewRelease(commits, currentVersion){
+async function createNewRelease(){
 
   // get latest release
   let latestRelease = await getLatestRelease();
@@ -64,10 +77,10 @@ async function createNewRelease(commits, currentVersion){
 
   // creates new release  
   await octokit.request('POST /repos/{owner}/{repo}/releases', {
-    owner: scope.repo.owner,
+    owner: scope.repo.owner!,
     repo: scope.repo.name,
     tag_name: newVersion,
-    target_commitish: scope.comitish,
+    target_commitish: scope.commitish,
     name: newVersion,
     body: generateReleaseNotes(newCommits),
     draft: false,
@@ -98,9 +111,12 @@ async function getLatestRelease(){
   });  
 
   // throw exception if last commit didn't reference a commit
-  if(!latestReleaseRef || !latestRelease.data ||!latestReleaseRef.data.object.type == 'commit')
+  if(!latestReleaseRef || !latestRelease.data || latestReleaseRef.data.object.type != 'commit' || latestReleaseRef.data.object.sha)
     throw new Error('Latest relase is not referencing a commit');
 
+  if(!latestRelease.data.name || latestReleaseRef.data.object.sha)
+    throw new Error('Could not find sha for latest release')
+    
   return {
     version: latestRelease.data.name,
     commitSha: latestReleaseRef.data.object.sha
@@ -108,7 +124,7 @@ async function getLatestRelease(){
 
 }
 
-async function getNewCommits(limitorSha){      
+async function getNewCommits(limitorSha : string){      
 
   // gets all commits
   let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
@@ -140,7 +156,7 @@ async function getNewCommits(limitorSha){
 
 }
 
-function calculateNewVersion(commits, verString){
+function calculateNewVersion(commits : ICommit[], verString : string){
 
   let currentVersion = splitVerison(verString);
 
@@ -165,6 +181,8 @@ function calculateNewVersion(commits, verString){
       patch = true;
   }
 
+  console.log(' ');
+
   if(major)
     return formatVersion(currentVersion.major + 1, 0, 0);
   else if(minor)
@@ -176,12 +194,12 @@ function calculateNewVersion(commits, verString){
 
 }
 
-function formatVersion(major, minor, patch){
+function formatVersion(major : number, minor : number, patch : number) : string{
   return 'v' + major + '.' + minor + '.' + patch; 
 }
 
 
-function splitVerison(verStr){
+function splitVerison(verStr : string){
 
   verStr = verStr.replace('v', '');
   let arr = verStr.split('.');
@@ -194,7 +212,7 @@ function splitVerison(verStr){
 
 }
 
-function generateReleaseNotes(commits){
+function generateReleaseNotes(commits : ICommit[]){
 
 
   let breakingChanges = [];
@@ -234,28 +252,28 @@ function generateReleaseNotes(commits){
   let releaseNotes = '';
 
   if(breakingChanges){
-    releaseNotes += '###### BREAKING: \n'
-      + breakingChanges.map(i => '*' + i + '\n');
+    releaseNotes += '#### BREAKING: \n'
+      + breakingChanges.map(i => '* ' + i + '\n');
   }  
 
   if(features){
-    releaseNotes += '###### Features: \n'
-      + features.map(i => '*' + i + '\n');
+    releaseNotes += '#### FEATURES: \n'
+      + features.map(i => '* ' + i + '\n');
   }
 
   if(fixes){
-    releaseNotes += '###### Bug Fixes: \n'
-      + fixes.map(i => '*' + i + '\n');
+    releaseNotes += '#### BUG FIXES: \n'
+      + fixes.map(i => '* ' + i + '\n');
   }
 
   if(performance){
-    releaseNotes += '###### Perfomance improvements: \n'
-      + performance.map(i => '*' + i + '\n');
+    releaseNotes += '#### PERFORMANCE: \n'
+      + performance.map(i => '* ' + i + '\n');
   }
 
   if(refactor){
-    releaseNotes += '###### Refactoring: \n'
-      + refactor.map(i => '*' + i + '\n');
+    releaseNotes += '#### REFACTORING: \n'
+      + refactor.map(i => '* ' + i + '\n');
   }
 
   return releaseNotes;
@@ -263,9 +281,13 @@ function generateReleaseNotes(commits){
 }
 
 
-function getCommitMessage(str){
+function getCommitMessage(str : string){
 
   let arr = /\(([^)]+)\):(.+)/.exec(str);
+
+  if(!arr)
+    throw new Error('Commit message "' + str + '" did not match regex');
+
   return '**' + arr[1].replace(/\(|\)/g,'') + '**, ' + arr[2].replace(/^ /g, '');
 
 }
