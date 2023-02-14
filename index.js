@@ -141,8 +141,6 @@ async function getNewCommits(limitorSha){
     if(commit.sha == limitorSha)
       break;
 
-    console.log(commit);
-
     // adds commit sha and message to array of new commits
     newCommits.push({
       sha: commit.sha,
@@ -288,7 +286,7 @@ function generateReleaseNotes(commits){
 
 function getCommitMessage(commit){
 
-  let arr = /\(([^)]+)\):(.+)/.exec(commmit.message);
+  let arr = /\(([^)]+)\):(.+)/.exec(commit.message);
 
   if(!arr)
     throw new Error('Commit message "' + commit.message + '" did not match regex');
