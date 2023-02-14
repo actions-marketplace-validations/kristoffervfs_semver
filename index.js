@@ -60,7 +60,6 @@ async function run(){
 
 run();
 
-
 async function createNewRelease(){
 
   // get latest release
