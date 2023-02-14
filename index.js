@@ -112,7 +112,7 @@ async function getLatestRelease(){
   if(!latestReleaseRef || !latestRelease.data || latestReleaseRef.data.object.type != 'commit' || !latestReleaseRef.data.object.sha)
     throw new Error('Latest relase is not referencing a commit');
 
-  if(!latestRelease.data.name || latestReleaseRef.data.object.sha)
+  if(!latestRelease.data.name || !latestReleaseRef.data.object.sha)
     throw new Error('Could not find sha for latest release')
     
   return {
