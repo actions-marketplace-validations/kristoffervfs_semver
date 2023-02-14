@@ -256,22 +256,22 @@ function generateReleaseNotes(commits){
 
   if(features.length > 0){
     releaseNotes += '#### FEATURES: \n'
-      + features.map(i => '* ' + i + '\n');
+      + features.map(i => '* ' + i).join('\n');
   }
 
   if(fixes.length > 0){
     releaseNotes += '#### BUG FIXES: \n'
-      + fixes.map(i => '* ' + i + '\n');
+      + fixes.map(i => '* ' + i).join('\n');
   }
 
   if(performance.length > 0){
     releaseNotes += '#### PERFORMANCE: \n'
-      + performance.map(i => '* ' + i + '\n');
+      + performance.map(i => '* ' + i).join('\n');
   }
 
   if(refactor.length > 0){
     releaseNotes += '#### REFACTORING: \n'
-      + refactor.map(i => '* ' + i + '\n');
+      + refactor.map(i => '* ' + i).join('\n');
   }
 
   return releaseNotes;
