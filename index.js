@@ -109,7 +109,7 @@ async function getLatestRelease(){
   });  
 
   // throw exception if last commit didn't reference a commit
-  if(!latestReleaseRef || !latestRelease.data || latestReleaseRef.data.object.type != 'commit' || latestReleaseRef.data.object.sha)
+  if(!latestReleaseRef || !latestRelease.data || latestReleaseRef.data.object.type != 'commit' || !latestReleaseRef.data.object.sha)
     throw new Error('Latest relase is not referencing a commit');
 
   if(!latestRelease.data.name || latestReleaseRef.data.object.sha)
