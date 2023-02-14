@@ -1,8 +1,6 @@
-import core from '@actions/core';
-import github from '@actions/github';
-import { Octokit } from "@octokit/action";
-import { ICommit } from './interfaces/ICommit';
-import { IScope } from './interfaces/IScope';
+const core = require('@actions/core');
+const github = require('@actions/github');
+const { Octokit } = require('@octokit/action');
 
 // regexes determining level of version change
 const majorRegex = new RegExp("^(breaking|BREAKING)(\(.+\)):.*");
