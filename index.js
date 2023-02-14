@@ -287,5 +287,4 @@ function getCommitMessage(str){
     throw new Error('Commit message "' + str + '" did not match regex');
 
   return '**' + arr[1].replace(/\(|\)/g,'') + '**, ' + arr[2].replace(/^ /g, '');
-
 }
