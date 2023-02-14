@@ -1,8 +1,8 @@
 {
-  "name": "automatic-semantic-versioned-release-test",
+  "name": "hello-world-javascript-action",
   "version": "1.0.0",
-  "description": "This action increments semver version based on commit tag",
-  "main": "./src/index.ts",
+  "description": "This action prints \"Hello World\" or \"Hello\" + the name of a person to greet to the log.",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/actions/hello-world-javascript-action#readme",
   "dependencies": {
-    "@actions/core": "^1.10.0",
-    "@actions/github": "^5.1.1",
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.1",
     "@octokit/action": "^5.0.2"
   }
 }

@@ -28,7 +28,7 @@ if(!github.context.payload.repository
   throw new Error('Github payload does not include repository information');
 
 // scope
-const scope : IScope = {
+const scope = {
   repo: {
     owner: github.context.payload.repository.owner.name,
     name: github.context.payload.repository.name
@@ -37,7 +37,7 @@ const scope : IScope = {
 };
 
 // program
-async function run() : Promise<void>{
+async function run(){
   try {    
 
     let result = await createNewRelease();
@@ -51,7 +51,7 @@ async function run() : Promise<void>{
     core.setOutput('new-release-created', true);
     core.setOutput('new-version', result);
 
-  } catch (error : any){
+  } catch (error){
 
     core.setOutput('new-release-created', true);
     core.setOutput('new-version', null);
@@ -77,7 +77,7 @@ async function createNewRelease(){
 
   // creates new release  
   await octokit.request('POST /repos/{owner}/{repo}/releases', {
-    owner: scope.repo.owner!,
+    owner: scope.repo.owner,
     repo: scope.repo.name,
     tag_name: newVersion,
     target_commitish: scope.commitish,
@@ -124,7 +124,7 @@ async function getLatestRelease(){
 
 }
 
-async function getNewCommits(limitorSha : string){      
+async function getNewCommits(limitorSha){      
 
   // gets all commits
   let request = await octokit.request('GET /repos/{owner}/{repo}/commits', {
@@ -156,7 +156,7 @@ async function getNewCommits(limitorSha : string){
 
 }
 
-function calculateNewVersion(commits : ICommit[], verString : string){
+function calculateNewVersion(commits, verString){
 
   let currentVersion = splitVerison(verString);
 
@@ -194,12 +194,12 @@ function calculateNewVersion(commits : ICommit[], verString : string){
 
 }
 
-function formatVersion(major : number, minor : number, patch : number) : string{
+function formatVersion(major, minor, patch){
   return 'v' + major + '.' + minor + '.' + patch; 
 }
 
 
-function splitVerison(verStr : string){
+function splitVerison(verStr){
 
   verStr = verStr.replace('v', '');
   let arr = verStr.split('.');
@@ -212,7 +212,7 @@ function splitVerison(verStr : string){
 
 }
 
-function generateReleaseNotes(commits : ICommit[]){
+function generateReleaseNotes(commits){
 
 
   let breakingChanges = [];
@@ -281,7 +281,7 @@ function generateReleaseNotes(commits : ICommit[]){
 }
 
 
-function getCommitMessage(str : string){
+function getCommitMessage(str){
 
   let arr = /\(([^)]+)\):(.+)/.exec(str);
 
