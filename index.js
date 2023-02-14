@@ -249,27 +249,27 @@ function generateReleaseNotes(commits){
 
   let releaseNotes = '';
 
-  if(breakingChanges){
+  if(breakingChanges.length > 0){
     releaseNotes += '#### BREAKING: \n'
       + breakingChanges.map(i => '* ' + i + '\n');
   }  
 
-  if(features){
+  if(features.length > 0){
     releaseNotes += '#### FEATURES: \n'
       + features.map(i => '* ' + i + '\n');
   }
 
-  if(fixes){
+  if(fixes.length > 0){
     releaseNotes += '#### BUG FIXES: \n'
       + fixes.map(i => '* ' + i + '\n');
   }
 
-  if(performance){
+  if(performance.length > 0){
     releaseNotes += '#### PERFORMANCE: \n'
       + performance.map(i => '* ' + i + '\n');
   }
 
-  if(refactor){
+  if(refactor.length > 0){
     releaseNotes += '#### REFACTORING: \n'
       + refactor.map(i => '* ' + i + '\n');
   }
