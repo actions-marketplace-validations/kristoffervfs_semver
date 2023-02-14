@@ -147,7 +147,7 @@ async function getNewCommits(limitorSha){
     newCommits.push({
       sha: commit.sha,
       message: commit.commit.message,
-      author: commit.commit.author.name
+      author: commit.committer.login
     });
   }
 
