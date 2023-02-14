@@ -18,8 +18,6 @@ const octokit = new Octokit({
   auth: core.getInput('GITHUB_TOKEN')
 });
 
-console.log(github.context);
-
 if(!github.context.payload.repository 
   || !github.context.payload.repository.name
   || !github.context.payload.repository.owner
@@ -143,6 +141,8 @@ async function getNewCommits(limitorSha){
     if(commit.sha == limitorSha)
       break;
 
+    console.log(commit);
+
     // adds commit sha and message to array of new commits
     newCommits.push({
       sha: commit.sha,
@@ -255,7 +255,7 @@ function generateReleaseNotes(commits){
   }
 
   let now = new Date();
-  let releaseNotes = now.toString('dd-MM-yyyy hh:mm');
+  let releaseNotes = '';
 
   if(breakingChanges.length > 0){
     releaseNotes += '#### BREAKING: \n'
@@ -285,7 +285,7 @@ function generateReleaseNotes(commits){
   releaseNotes += '\n\n';
   releaseNotes += '#### CONTRIBUTORS: \n';
   contributors.forEach(c => {
-    releaseNotes += '*' + c + '\n'
+    releaseNotes += '* @' + c + '\n'
   });
 
   return releaseNotes;
