@@ -214,7 +214,6 @@ function splitVerison(verStr){
 
 function generateReleaseNotes(commits){
 
-  let contributors = new Set();
   let breakingChanges = [];
   let features = [];
   let fixes = [];
@@ -223,38 +222,32 @@ function generateReleaseNotes(commits){
 
   for(let i = 0; i < commits.length; i++){
 
-    let commitMessage = commits[i].message;
+    let commit = commits[i];
 
-    if(commitMessage.match(breakingRegex)){
+    if(commit.message.match(breakingRegex)){
 
-      breakingChanges.push(getCommitMessage(commitMessage))
-      contributors.add(commits[i].author);
+      breakingChanges.push(getCommitMessage(commit))
 
-    } else if(commitMessage.match(featureRegex)){
+    } else if(commit.message.match(featureRegex)){
       
-      features.push(getCommitMessage(commitMessage));
-      contributors.add(commits[i].author);
+      features.push(getCommitMessage(commit));
 
-    } else if(commitMessage.match(fixRegex)){
+    } else if(commit.message.match(fixRegex)){
 
-      fixes.push(getCommitMessage(commitMessage));
-      contributors.add(commits[i].author);
+      fixes.push(getCommitMessage(commit));
       
-    } else if(commitMessage.match(perfRegex)){
+    } else if(commit.message.match(perfRegex)){
 
-      performance.push(getCommitMessage(commitMessage));
-      contributors.add(commits[i].author);
+      performance.push(getCommitMessage(commit));
       
-    } else if(commitMessage.match(refactorRegex)){
+    } else if(commit.message.match(refactorRegex)){
 
-      refactor.push(getCommitMessage(commitMessage));
-      contributors.add(commits[i].author);
+      refactor.push(getCommitMessage(commit));
       
     }
     
   }
 
-  let now = new Date();
   let releaseNotes = '';
 
   if(breakingChanges.length > 0){
@@ -293,13 +286,17 @@ function generateReleaseNotes(commits){
 }
 
 
-function getCommitMessage(str){
+function getCommitMessage(commmit){
 
-  let arr = /\(([^)]+)\):(.+)/.exec(str);
+  let arr = /\(([^)]+)\):(.+)/.exec(commmit.message);
 
   if(!arr)
-    throw new Error('Commit message "' + str + '" did not match regex');
+    throw new Error('Commit message "' + commit.message + '" did not match regex');
 
-  return '**' + arr[1].replace(/\(|\)/g,'') + '**, ' + arr[2].replace(/^ /g, '');
+  let subject = arr[1].replace(/\(|\)/g,'');
+  let description = arr[2].replace(/^ /g, '');
+  let shaShort = commit.sha.slice(0,7);
+
+  return '**' + subject + '**, ' + description + ', @' + commit.author + ', ' + shaShort;
 
 }
