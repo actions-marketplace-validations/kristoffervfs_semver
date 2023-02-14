@@ -273,12 +273,6 @@ function generateReleaseNotes(commits){
       + refactor.map(i => '* ' + i).join('\n');
   }  
 
-  releaseNotes += '\n\n';
-  releaseNotes += '#### CONTRIBUTORS: \n';
-  contributors.forEach(c => {
-    releaseNotes += '* @' + c + '\n'
-  });
-
   return releaseNotes;
   
 }
