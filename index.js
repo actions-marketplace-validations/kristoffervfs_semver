@@ -289,6 +289,6 @@ function getCommitMessage(commit){
   let description = arr[2].replace(/^ /g, '');
   let shaShort = commit.sha.slice(0,7);
 
-  return '**' + subject + '**, ' + description + ' (@' + commit.author + ', ' + shaShort + ')';
+  return '**' + subject + '**, ' + description + ' (' + shaShort + ', @' + commit.author + ')';
 
 }
