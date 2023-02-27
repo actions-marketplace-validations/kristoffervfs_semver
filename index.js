@@ -43,6 +43,7 @@ async function run(){
     if(!result){
       console.log('No need for new release');
       core.setOutput('new-release-created', false);
+      return;
     }
     
     console.log('Release ' + result + ' created');
